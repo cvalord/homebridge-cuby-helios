@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1 - Verification fixes
+
+- Added `repository`, `homepage`, and `bugs.url` metadata to `package.json`.
+- Corrected `config.schema.json` to use object-level JSON Schema `required` array.
+
 ## 1.0.0 - 2026-09-07
 
 - Primera versión pública de `homebridge-cuby-helios`.

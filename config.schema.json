@@ -10,19 +10,16 @@
       "name": {
         "title": "Nombre",
         "type": "string",
-        "default": "Cuby Helios",
-        "required": true
+        "default": "Cuby Helios"
       },
       "email": {
         "title": "Correo de Cuby",
         "type": "string",
-        "format": "email",
-        "required": true
+        "format": "email"
       },
       "password": {
         "title": "Contraseña de Cuby",
         "type": "string",
-        "required": true,
         "x-schema-form": {
           "type": "password"
         }
@@ -32,8 +29,7 @@
         "type": "string",
         "minLength": 12,
         "maxLength": 12,
-        "pattern": "^[A-Za-z0-9]{12}$",
-        "required": true
+        "pattern": "^[A-Za-z0-9]{12}$"
       },
       "pollingInterval": {
         "title": "Intervalo de actualización (segundos)",
@@ -56,6 +52,12 @@
         "maximum": 100,
         "default": 20
       }
-    }
+    },
+    "required": [
+      "name",
+      "email",
+      "password",
+      "deviceID"
+    ]
   }
 }
