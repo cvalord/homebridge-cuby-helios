@@ -1,0 +1,45 @@
+{
+  "name": "homebridge-cuby-helios",
+  "displayName": "Homebridge Cuby Helios",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Homebridge plugin for Cuby Helios gas level monitoring with automatic JWT renewal.",
+  "author": "Cuby Helios Contributors",
+  "license": "MIT",
+  "keywords": [
+    "homebridge",
+    "homebridge-plugin",
+    "supports-hap",
+    "cuby",
+    "helios",
+    "gas",
+    "gas-level"
+  ],
+  "main": "dist/index.js",
+  "engines": {
+    "node": "^22.12.0 || ^24.0.0 || ^26.0.0",
+    "homebridge": "^1.11.4 || ^2.0.0"
+  },
+  "files": [
+    "dist",
+    "config.schema.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rimraf ./dist && tsc",
+    "clean": "rimraf ./dist",
+    "prepublishOnly": "npm run build",
+    "pack:check": "npm pack --dry-run"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "homebridge": "^2.4.0",
+    "rimraf": "^6.1.3",
+    "typescript": "^6.0.3"
+  }
+}

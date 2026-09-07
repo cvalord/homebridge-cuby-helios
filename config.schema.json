@@ -1,0 +1,61 @@
+{
+  "pluginAlias": "CubyHelios",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "# Cuby Helios\nConsulta el nivel de gas de tu Cuby Helios y lo muestra en HomeKit. El plugin genera y renueva el JWT automáticamente.",
+  "footerDisplay": "La contraseña y el JWT nunca se imprimen en los logs. El nivel de gas se presenta como porcentaje mediante un sensor de humedad llamado **Nivel de Gas**, ya que HomeKit no ofrece un servicio nativo para nivel de tanque.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Nombre",
+        "type": "string",
+        "default": "Cuby Helios",
+        "required": true
+      },
+      "email": {
+        "title": "Correo de Cuby",
+        "type": "string",
+        "format": "email",
+        "required": true
+      },
+      "password": {
+        "title": "Contraseña de Cuby",
+        "type": "string",
+        "required": true,
+        "x-schema-form": {
+          "type": "password"
+        }
+      },
+      "deviceID": {
+        "title": "Cuby Device ID",
+        "type": "string",
+        "minLength": 12,
+        "maxLength": 12,
+        "pattern": "^[A-Za-z0-9]{12}$",
+        "required": true
+      },
+      "pollingInterval": {
+        "title": "Intervalo de actualización (segundos)",
+        "type": "integer",
+        "minimum": 60,
+        "maximum": 3600,
+        "default": 300
+      },
+      "tokenExpiration": {
+        "title": "Duración solicitada del JWT (segundos)",
+        "type": "integer",
+        "minimum": 300,
+        "maximum": 2592000,
+        "default": 3600
+      },
+      "lowGasThreshold": {
+        "title": "Umbral de gas bajo (%)",
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "default": 20
+      }
+    }
+  }
+}
