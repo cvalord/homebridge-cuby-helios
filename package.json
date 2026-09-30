@@ -2,7 +2,7 @@
   "name": "homebridge-cuby-helios",
   "displayName": "Homebridge Cuby Helios",
   "type": "module",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Homebridge plugin for Cuby Helios gas level monitoring with automatic JWT renewal.",
   "author": "Cuby Helios Contributors",
   "license": "MIT",
