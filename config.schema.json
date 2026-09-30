@@ -3,7 +3,7 @@
   "pluginType": "platform",
   "singular": true,
   "headerDisplay": "# Cuby Helios\nConsulta el nivel de gas de tu Cuby Helios y lo muestra en HomeKit. El plugin genera y renueva el JWT automáticamente.",
-  "footerDisplay": "La contraseña y el JWT nunca se imprimen en los logs. El nivel de gas se presenta como porcentaje mediante un sensor de humedad llamado **Nivel de Gas**, ya que HomeKit no ofrece un servicio nativo para nivel de tanque.",
+  "footerDisplay": "La alerta indica gas bajo, no una fuga real. Se activa una vez por ciclo y se reinicia ante una subida de 10 puntos confirmada en dos lecturas. Las notificaciones dependen de los ajustes de la app Casa.",
   "schema": {
     "type": "object",
     "properties": {
@@ -47,10 +47,26 @@
       },
       "lowGasThreshold": {
         "title": "Umbral de gas bajo (%)",
-        "type": "number",
+        "type": "integer",
         "minimum": 0,
         "maximum": 100,
-        "default": 20
+        "default": 20,
+        "multipleOf": 1
+      },
+      "displayMode": {
+        "title": "Mostrar nivel como",
+        "type": "string",
+        "enum": [
+          "humidity",
+          "battery"
+        ],
+        "default": "humidity",
+        "description": "humidity: humedad; battery: batería."
+      },
+      "enableLowGasAlert": {
+        "title": "Activar alerta de gas bajo",
+        "type": "boolean",
+        "default": false
       }
     },
     "required": [

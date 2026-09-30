@@ -8,6 +8,8 @@ export interface CubyHeliosConfig extends PlatformConfig {
   pollingInterval?: number;
   tokenExpiration?: number;
   lowGasThreshold?: number;
+  displayMode?: 'humidity' | 'battery';
+  enableLowGasAlert?: boolean;
 }
 
 export interface TokenResponse {

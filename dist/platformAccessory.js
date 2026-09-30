@@ -1,3 +1,4 @@
+import { updateAlert } from './alertState.js';
 export class CubyHeliosAccessory {
     platform;
     accessory;
@@ -6,6 +7,9 @@ export class CubyHeliosAccessory {
     timer;
     refreshPromise;
     currentLevel = 0;
+    alertState;
+    alertService;
+    battery;
     constructor(platform, accessory) {
         this.platform = platform;
         this.accessory = accessory;
@@ -14,17 +18,32 @@ export class CubyHeliosAccessory {
             .setCharacteristic(platform.Characteristic.Manufacturer, 'Cuby')
             .setCharacteristic(platform.Characteristic.Model, 'Helios')
             .setCharacteristic(platform.Characteristic.SerialNumber, platform.config.deviceID);
-        // HomeKit has no native "tank level" service. Relative Humidity gives us a
-        // native 0-100% tile in Apple Home while the accessory/service name makes
-        // the real meaning explicit to the user.
-        this.service = accessory.getService(platform.Service.HumiditySensor)
-            ?? accessory.addService(platform.Service.HumiditySensor, 'Nivel de Gas');
+        this.battery = platform.config.displayMode === 'battery';
+        this.alertState = accessory.context.lowGasAlert ?? { triggered: false, refillReadings: 0 };
+        accessory.context.lowGasAlert = this.alertState;
+        const selected = this.battery ? platform.Service.Battery : platform.Service.HumiditySensor;
+        const old = accessory.getService(this.battery ? platform.Service.HumiditySensor : platform.Service.Battery);
+        if (old)
+            accessory.removeService(old);
+        this.service = accessory.getService(selected) ?? accessory.addService(selected, 'Nivel de Gas');
         this.service.setCharacteristic(platform.Characteristic.Name, 'Nivel de Gas');
-        this.service.getCharacteristic(platform.Characteristic.CurrentRelativeHumidity)
+        if (this.battery) {
+            this.service.setCharacteristic(platform.Characteristic.ChargingState, platform.Characteristic.ChargingState.NOT_CHARGEABLE);
+        }
+        this.service.getCharacteristic(this.battery ? platform.Characteristic.BatteryLevel : platform.Characteristic.CurrentRelativeHumidity)
             .onGet(async () => {
             await this.refresh();
             return this.currentLevel;
         });
+        const existingAlert = accessory.getService(platform.Service.LeakSensor);
+        if (platform.config.enableLowGasAlert) {
+            this.alertService = existingAlert ?? accessory.addService(platform.Service.LeakSensor, 'Alerta de gas bajo');
+            this.alertService.setCharacteristic(platform.Characteristic.Name, 'Alerta de gas bajo');
+        }
+        else if (existingAlert) {
+            accessory.removeService(existingAlert);
+        }
+        this.updateAlertCharacteristics();
         this.start();
     }
     stop() {
@@ -45,16 +64,26 @@ export class CubyHeliosAccessory {
         }
         await this.refreshPromise;
     }
+    updateAlertCharacteristics() {
+        const active = this.platform.config.enableLowGasAlert === true && this.alertState.triggered;
+        this.alertService?.updateCharacteristic(this.platform.Characteristic.LeakDetected, active ? 1 : 0);
+        if (this.battery) {
+            this.service.updateCharacteristic(this.platform.Characteristic.StatusLowBattery, active ? 1 : 0);
+        }
+    }
     async doRefresh() {
         try {
             const level = await this.platform.client.getGasLevel(this.platform.config.deviceID);
             this.currentLevel = level;
-            this.service.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, level);
-            if (level <= this.platform.lowGasThreshold) {
-                this.platform.log.warn(`Nivel de gas bajo: ${level}% (umbral ${this.platform.lowGasThreshold}%).`);
+            this.service.updateCharacteristic(this.battery ? this.platform.Characteristic.BatteryLevel : this.platform.Characteristic.CurrentRelativeHumidity, level);
+            const event = updateAlert(this.alertState, level, this.platform.lowGasThreshold, this.platform.config.enableLowGasAlert === true);
+            this.updateAlertCharacteristics();
+            this.platform.api.updatePlatformAccessories([this.accessory]);
+            if (event === 'alert') {
+                this.platform.log.warn(`Nivel de gas bajo: ${level}% (umbral ${this.platform.lowGasThreshold}%). Aviso único hasta la próxima recarga.`);
             }
-            else {
-                this.platform.log.debug(`Nivel de gas actualizado: ${level}%.`);
+            else if (event === 'refill') {
+                this.platform.log.info('Recarga estimada detectada. La alerta de gas bajo está lista para el siguiente ciclo.');
             }
         }
         catch (error) {

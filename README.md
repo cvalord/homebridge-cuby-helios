@@ -1,6 +1,8 @@
 # homebridge-cuby-helios
 
-**Versión 1.0.0**
+![Cuby Smart](assets/cuby-icon.jpg)
+
+**Versión 1.1.0**
 
 Plugin de Homebridge para consultar el nivel de gas de **Cuby Helios** mediante la API de Cuby.
 
@@ -118,3 +120,26 @@ sudo npm install -g homebridge-cuby-helios
 ```
 
 Para cada nueva versión, incrementa `version`, actualiza `CHANGELOG.md`, crea la release correspondiente en GitHub y vuelve a ejecutar `npm publish`.
+
+## Versión 1.1.0
+
+- `displayMode`: `humidity` (predeterminado) o `battery`.
+- `enableLowGasAlert`: activa el sensor «Alerta de gas bajo»; desactivado por defecto.
+- `lowGasThreshold`: entero de 0 a 100, predeterminado 20. Se activa al llegar al umbral o bajar de él; con 0 se activa al llegar a 0 %.
+- La alerta queda activada y se guarda en la caché de Homebridge para evitar nuevas activaciones por oscilaciones o reinicios. Con la alerta desactivada se conserva el ciclo anterior.
+- Una recarga se estima por una subida de al menos 10 puntos respecto al mínimo observado después de la alerta, confirmada en dos consultas consecutivas y con el nivel por encima del umbral. Esto permite el próximo aviso. Con umbral 100 la alerta se activa con cualquier lectura válida y no puede rearmarse automáticamente, porque el nivel no puede superar 100 %.
+- El sensor de fuga se usa exclusivamente para representar gas bajo: no detecta fugas reales. Casa puede mostrarlo como fuga. Las notificaciones dependen de Casa y sus ajustes; el plugin no garantiza una sola notificación del sistema, sino una sola transición de alerta por ciclo.
+
+### Instalar el paquete local
+
+Copia el archivo `.tgz` al equipo Homebridge y ejecuta desde su terminal:
+
+```sh
+sudo npm install -g ./homebridge-cuby-helios-1.1.0.tgz
+```
+
+Configura las opciones en Homebridge UI y reinicia Homebridge. Las pruebas automáticas no sustituyen la validación con un dispositivo Cuby real.
+
+## Icono
+
+Icono de Cuby Smart obtenido de su ficha oficial en la App Store. La marca y el icono pertenecen a sus respectivos titulares. Este plugin es una integración comunitaria. Su aparición en Homebridge UI requiere la aprobación de la solicitud de icono por Homebridge.

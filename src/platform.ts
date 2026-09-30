@@ -34,7 +34,7 @@ export class CubyHeliosPlatform implements DynamicPlatformPlugin {
     this.Service = api.hap.Service;
     this.Characteristic = api.hap.Characteristic;
     this.pollingInterval = Math.max(60, this.config.pollingInterval ?? 300);
-    this.lowGasThreshold = Math.max(0, Math.min(100, this.config.lowGasThreshold ?? 20));
+    this.lowGasThreshold = Math.max(0, Math.min(100, Number.isFinite(this.config.lowGasThreshold) ? Math.round(this.config.lowGasThreshold!) : 20));
 
     this.configured = Boolean(this.config.email && this.config.password && this.config.deviceID);
     this.client = new CubyApiClient(

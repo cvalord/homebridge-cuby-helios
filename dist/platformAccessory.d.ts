@@ -8,9 +8,13 @@ export declare class CubyHeliosAccessory {
     private timer?;
     private refreshPromise?;
     private currentLevel;
+    private readonly alertState;
+    private readonly alertService?;
+    private readonly battery;
     constructor(platform: CubyHeliosPlatform, accessory: PlatformAccessory);
     stop(): void;
     private start;
     private refresh;
+    private updateAlertCharacteristics;
     private doRefresh;
 }

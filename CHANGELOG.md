@@ -1,3 +1,7 @@
+# 1.1.0
+
+Umbral entero de 0 a 100, selección humedad/batería y alerta opcional persistente por ciclo, con rearme automático por recarga estimada.
+
 # Changelog
 
 ## 1.0.1 - Verification fixes
