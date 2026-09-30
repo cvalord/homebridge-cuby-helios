@@ -39,6 +39,7 @@
     "access": "public"
   },
   "devDependencies": {
+     "@homebridge/hap-nodejs": "^2.2.2",
     "@types/node": "^26.2.0",
     "homebridge": "^2.4.0",
     "rimraf": "^6.1.3",
